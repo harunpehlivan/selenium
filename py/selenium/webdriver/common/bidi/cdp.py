@@ -152,8 +152,7 @@ class BrowserError(Exception):
         self.detail = obj.get('data')
 
     def __str__(self):
-        return 'BrowserError<code={} message={}> {}'.format(self.code,
-                                                            self.message, self.detail)
+        return f'BrowserError<code={self.code} message={self.message}> {self.detail}'
 
 
 class CdpConnectionClosed(WsConnectionClosed):
@@ -193,8 +192,8 @@ class CdpBase:
         self.target_id = target_id
         self.channels = defaultdict(set)
         self.id_iter = itertools.count()
-        self.inflight_cmd = dict()
-        self.inflight_result = dict()
+        self.inflight_cmd = {}
+        self.inflight_result = {}
 
     async def execute(self, cmd: typing.Generator[dict, T, typing.Any]) -> T:
         '''
@@ -265,8 +264,7 @@ class CdpBase:
         try:
             cmd, event = self.inflight_cmd.pop(cmd_id)
         except KeyError:
-            logger.warning('Got a message with a command ID that does'
-                           ' not exist: {}'.format(data))
+            logger.warning(f'Got a message with a command ID that does not exist: {data}')
             return
         if 'error' in data:
             # If the server reported an error, convert it to an exception and do
@@ -387,7 +385,7 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         :param trio_websocket.WebSocketConnection ws:
         '''
         super().__init__(ws, session_id=None, target_id=None)
-        self.sessions = dict()
+        self.sessions = {}
 
     async def aclose(self):
         '''

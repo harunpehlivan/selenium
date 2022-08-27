@@ -46,7 +46,7 @@ class ShadowRoot:
             value = '[id="%s"]' % value
         elif by == By.CLASS_NAME:
             by = By.CSS_SELECTOR
-            value = ".%s" % value
+            value = f".{value}"
         elif by == By.NAME:
             by = By.CSS_SELECTOR
             value = '[name="%s"]' % value
@@ -61,7 +61,7 @@ class ShadowRoot:
             value = '[id="%s"]' % value
         elif by == By.CLASS_NAME:
             by = By.CSS_SELECTOR
-            value = ".%s" % value
+            value = f".{value}"
         elif by == By.NAME:
             by = By.CSS_SELECTOR
             value = '[name="%s"]' % value

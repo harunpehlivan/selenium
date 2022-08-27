@@ -43,11 +43,11 @@ class Service(service.Service):
            Default is "stdout"."""
         self.service_args = []
         if host:
-            self.service_args.append("--host=%s" % host)
+            self.service_args.append(f"--host={host}")
         if log_level:
-            self.service_args.append("--log-level=%s" % log_level)
+            self.service_args.append(f"--log-level={log_level}")
         if log_file:
-            self.service_args.append("--log-file=%s" % log_file)
+            self.service_args.append(f"--log-file={log_file}")
 
         super().__init__(executable_path, port=port,
                          start_error_message="Please download from https://www.selenium.dev/downloads/ and read up at https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver")

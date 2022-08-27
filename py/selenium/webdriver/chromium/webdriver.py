@@ -71,7 +71,6 @@ class ChromiumDriver(RemoteWebDriver):
 
         self.vendor_prefix = vendor_prefix
 
-        _ignore_proxy = None
         if not options:
             options = self.create_options()
 
@@ -79,9 +78,7 @@ class ChromiumDriver(RemoteWebDriver):
             for key, value in desired_capabilities.items():
                 options.set_capability(key, value)
 
-        if options._ignore_local_proxy:
-            _ignore_proxy = options._ignore_local_proxy
-
+        _ignore_proxy = options._ignore_local_proxy or None
         if not service:
             raise AttributeError('service cannot be None')
 
@@ -238,7 +235,4 @@ class ChromiumDriver(RemoteWebDriver):
             self.service.stop()
 
     def create_options(self) -> BaseOptions:
-        if self.vendor_prefix == "ms":
-            return EdgeOptions()
-        else:
-            return ChromeOptions()
+        return EdgeOptions() if self.vendor_prefix == "ms" else ChromeOptions()

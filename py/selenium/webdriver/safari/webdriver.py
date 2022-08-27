@@ -80,10 +80,10 @@ class WebDriver(RemoteWebDriver):
                           DeprecationWarning, stacklevel=2)
 
         self._reuse_service = reuse_service
-        if service:
-            self.service = service
-        else:
-            self.service = Service(executable_path, port=port, quiet=quiet, service_args=service_args)
+        self.service = service or Service(
+            executable_path, port=port, quiet=quiet, service_args=service_args
+        )
+
         if not reuse_service:
             self.service.start()
 
@@ -118,8 +118,7 @@ class WebDriver(RemoteWebDriver):
         if not isinstance(value, bool):
             raise WebDriverException("Value of a session permission must be set to True or False.")
 
-        payload = {}
-        payload[permission] = value
+        payload = {permission: value}
         self.execute("SET_PERMISSIONS", {"permissions": payload})
 
     # First available in Safari 11.1 and Safari Technology Preview 41.
@@ -133,10 +132,7 @@ class WebDriver(RemoteWebDriver):
             return None
 
         value = permissions[permission]
-        if not isinstance(value, bool):
-            return None
-
-        return value
+        return value if isinstance(value, bool) else None
 
     # First available in Safari 11.1 and Safari Technology Preview 42.
     def debug(self):

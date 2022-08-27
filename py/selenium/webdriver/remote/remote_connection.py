@@ -113,14 +113,10 @@ class RemoteConnection:
 
         if parsed_url.username:
             base64string = b64encode('{0.username}:{0.password}'.format(parsed_url).encode())
-            headers.update({
-                'Authorization': f'Basic {base64string.decode()}'
-            })
+            headers['Authorization'] = f'Basic {base64string.decode()}'
 
         if keep_alive:
-            headers.update({
-                'Connection': 'keep-alive'
-            })
+            headers['Connection'] = 'keep-alive'
 
         return headers
 
@@ -167,9 +163,7 @@ class RemoteConnection:
         self.keep_alive = keep_alive
         self._url = remote_server_addr
 
-        # Env var NO_PROXY will override this part of the code
-        _no_proxy = os.environ.get('no_proxy', os.environ.get('NO_PROXY'))
-        if _no_proxy:
+        if _no_proxy := os.environ.get('no_proxy', os.environ.get('NO_PROXY')):
             for npu in _no_proxy.split(','):
                 npu = npu.strip()
                 if npu == "*":
@@ -177,16 +171,15 @@ class RemoteConnection:
                     break
                 n_url = parse.urlparse(npu)
                 remote_add = parse.urlparse(self._url)
-                if n_url.netloc:
-                    if remote_add.netloc == n_url.netloc:
-                        ignore_proxy = True
-                        break
-                else:
-                    if n_url.path in remote_add.netloc:
-                        ignore_proxy = True
-                        break
-
-        self._proxy_url = self._get_proxy_url() if not ignore_proxy else None
+                if (
+                    n_url.netloc
+                    and remote_add.netloc == n_url.netloc
+                    or not n_url.netloc
+                    and n_url.path in remote_add.netloc
+                ):
+                    ignore_proxy = True
+                    break
+        self._proxy_url = None if ignore_proxy else self._get_proxy_url()
         if keep_alive:
             self._conn = self._get_connection_manager()
 
@@ -335,7 +328,7 @@ class RemoteConnection:
            its JSON payload.
         """
         command_info = self._commands[command]
-        assert command_info is not None, 'Unrecognised command %s' % command
+        assert command_info is not None, f'Unrecognised command {command}'
         path = string.Template(command_info[1]).substitute(params)
         if isinstance(params, dict) and 'sessionId' in params:
             del params['sessionId']
@@ -386,7 +379,7 @@ class RemoteConnection:
             content_type = []
             if response.getheader('Content-Type'):
                 content_type = response.getheader('Content-Type').split(';')
-            if not any([x.startswith('image/png') for x in content_type]):
+            if not any(x.startswith('image/png') for x in content_type):
 
                 try:
                     data = utils.load_json(data.strip())
@@ -401,10 +394,9 @@ class RemoteConnection:
                 # with no 'value' field when they should return null.
                 if 'value' not in data:
                     data['value'] = None
-                return data
             else:
                 data = {'status': 0, 'value': data}
-                return data
+            return data
         finally:
             LOGGER.debug("Finished Request")
             response.close()

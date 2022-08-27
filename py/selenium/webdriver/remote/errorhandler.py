@@ -109,7 +109,7 @@ class ErrorHandler:
 
         :Raises: If the response contains an error message.
         """
-        status = response.get('status', None)
+        status = response.get('status')
         if not status or status == ErrorCode.SUCCESS:
             return
         value = None
@@ -117,7 +117,7 @@ class ErrorHandler:
         screen: str = response.get("screen", "")
         stacktrace = None
         if isinstance(status, int):
-            value_json = response.get('value', None)
+            value_json = response.get('value')
             if value_json and isinstance(value_json, str):
                 import json
                 try:
@@ -152,8 +152,8 @@ class ErrorHandler:
         elif status in ErrorCode.INVALID_ELEMENT_STATE:
             exception_class = InvalidElementStateException
         elif status in ErrorCode.INVALID_SELECTOR \
-                or status in ErrorCode.INVALID_XPATH_SELECTOR \
-                or status in ErrorCode.INVALID_XPATH_SELECTOR_RETURN_TYPER:
+                    or status in ErrorCode.INVALID_XPATH_SELECTOR \
+                    or status in ErrorCode.INVALID_XPATH_SELECTOR_RETURN_TYPER:
             exception_class = InvalidSelectorException
         elif status in ErrorCode.ELEMENT_IS_NOT_SELECTABLE:
             exception_class = ElementNotSelectableException
@@ -208,13 +208,9 @@ class ErrorHandler:
         if message == "" and 'message' in value:
             message = value['message']
 
-        screen = None  # type: ignore[assignment]
-        if 'screen' in value:
-            screen = value['screen']
-
+        screen = value['screen'] if 'screen' in value else None
         stacktrace = None
-        st_value = value.get('stackTrace') or value.get('stacktrace')
-        if st_value:
+        if st_value := value.get('stackTrace') or value.get('stacktrace'):
             if isinstance(st_value, str):
                 stacktrace = st_value.split('\n')
             else:
@@ -227,9 +223,9 @@ class ErrorHandler:
                             file = f"{file}:{line}"
                         meth = frame.get('methodName', '<anonymous>')
                         if 'className' in frame:
-                            meth = "{}.{}".format(frame['className'], meth)
+                            meth = f"{frame['className']}.{meth}"
                         msg = "    at %s (%s)"
-                        msg = msg % (meth, file)
+                        msg %= (meth, file)
                         stacktrace.append(msg)
                 except TypeError:
                     pass

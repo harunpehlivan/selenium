@@ -44,9 +44,15 @@ drivers = (
 
 
 def pytest_addoption(parser):
-    parser.addoption('--driver', action='append', choices=drivers, dest='drivers',
-                     metavar='DRIVER',
-                     help='driver to run tests against ({})'.format(', '.join(drivers)))
+    parser.addoption(
+        '--driver',
+        action='append',
+        choices=drivers,
+        dest='drivers',
+        metavar='DRIVER',
+        help=f"driver to run tests against ({', '.join(drivers)})",
+    )
+
     parser.addoption('--browser-binary', action='store', dest='binary',
                      help='location of the browser binary')
     parser.addoption('--driver-binary', action='store', dest='executable',
@@ -91,11 +97,10 @@ def driver(request):
     marker = request.node.get_closest_marker(f'xfail_{driver_class.lower()}')
 
     if marker is not None:
-        if "run" in marker.kwargs:
-            if marker.kwargs["run"] is False:
-                pytest.skip()
-                yield
-                return
+        if "run" in marker.kwargs and marker.kwargs["run"] is False:
+            pytest.skip()
+            yield
+            return
         if "raises" in marker.kwargs:
             marker.kwargs.pop("raises")
         pytest.xfail(**marker.kwargs)
@@ -105,6 +110,7 @@ def driver(request):
             if driver_instance is not None:
                 driver_instance.quit()
             driver_instance = None
+
         request.addfinalizer(fin)
 
     driver_path = request.config.option.executable
@@ -118,7 +124,7 @@ def driver(request):
             options = get_options(driver_class, request.config)
         if driver_class == 'Remote':
             capabilities = DesiredCapabilities.FIREFOX.copy()
-            kwargs.update({'desired_capabilities': capabilities})
+            kwargs['desired_capabilities'] = capabilities
             options = get_options('Firefox', request.config)
         if driver_class == 'WebKitGTK':
             options = get_options(driver_class, request.config)

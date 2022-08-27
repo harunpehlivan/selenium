@@ -57,9 +57,7 @@ class WheelInput(InputDevice):
         self.type = interaction.WHEEL
 
     def encode(self) -> dict:
-        return {"type": self.type,
-                "id": self.name,
-                "actions": [acts for acts in self.actions]}
+        return {"type": self.type, "id": self.name, "actions": list(self.actions)}
 
     def create_scroll(self, x: int, y: int, delta_x: int,
                       delta_y: int, duration: int, origin) -> None:

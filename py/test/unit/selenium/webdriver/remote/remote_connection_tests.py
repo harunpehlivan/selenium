@@ -33,7 +33,7 @@ def test_get_remote_connection_headers_defaults():
     assert 'Connection' not in headers.keys()
     assert headers.get('Accept') == 'application/json'
     assert headers.get('Content-Type') == 'application/json;charset=UTF-8'
-    assert headers.get('User-Agent').startswith("selenium/%s (python " % __version__)
+    assert headers.get('User-Agent').startswith(f"selenium/{__version__} (python ")
     assert headers.get('User-Agent').split(' ')[-1] in {'windows)', 'mac)', 'linux)'}
 
 

@@ -63,6 +63,8 @@ class Color:
     def from_string(cls, str_: str) -> Color:
         import re
 
+
+
         class Matcher:
             match_obj: Match[str] | None
 
@@ -75,7 +77,8 @@ class Color:
 
             @property
             def groups(self) -> Sequence[str]:
-                return () if not self.match_obj else self.match_obj.groups()
+                return self.match_obj.groups() if self.match_obj else ()
+
 
         m = Matcher()
 
@@ -101,7 +104,7 @@ class Color:
         elif str_.upper() in Colors.keys():
             return Colors[str_.upper()]
         else:
-            raise ValueError("Could not convert %s into color" % str_)
+            raise ValueError(f"Could not convert {str_} into color")
 
     @classmethod
     def _from_hsl(cls, h: ParseableFloat, s: ParseableFloat, light: ParseableFloat,
@@ -159,15 +162,11 @@ class Color:
         return f"#{self.red:02x}{self.green:02x}{self.blue:02x}"
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, Color):
-            return self.rgba == other.rgba
-        return NotImplemented
+        return self.rgba == other.rgba if isinstance(other, Color) else NotImplemented
 
     def __ne__(self, other: Any) -> bool:
         result = self.__eq__(other)
-        if result is NotImplemented:
-            return result
-        return not result
+        return result if result is NotImplemented else not result
 
     def __hash__(self) -> int:
         return hash((self.red, self.green, self.blue, self.alpha))

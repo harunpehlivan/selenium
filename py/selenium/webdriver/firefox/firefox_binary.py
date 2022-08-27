@@ -89,8 +89,7 @@ class FirefoxBinary:
             self._modify_link_library_path()
         command = [self._start_cmd, "-foreground"]
         if self.command_line:
-            for cli in self.command_line:
-                command.append(cli)
+            command.extend(iter(self.command_line))
         self.process = Popen(
             command, stdout=self._log_file, stderr=STDOUT,
             env=self._firefox_env)
@@ -141,10 +140,7 @@ class FirefoxBinary:
         else:
             return ""
 
-        if not command:
-            return ""
-
-        return shlex.split(command)[0]
+        return shlex.split(command)[0] if command else ""
 
     def _get_firefox_start_cmd(self):
         """Return the command to start firefox."""
@@ -208,7 +204,7 @@ class FirefoxBinary:
                 path,
                 self.NO_FOCUS_LIBRARY_NAME),
                 library_path)
-            built_path += library_path + ":"
+            built_path += f"{library_path}:"
 
         return built_path
 

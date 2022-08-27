@@ -60,17 +60,19 @@ class PointerInput(InputDevice):
         self.add_action({"type": "pause", "duration": int(pause_duration * 1000)})
 
     def encode(self):
-        return {"type": self.type,
-                "parameters": {"pointerType": self.kind},
-                "id": self.name,
-                "actions": [acts for acts in self.actions]}
+        return {
+            "type": self.type,
+            "parameters": {"pointerType": self.kind},
+            "id": self.name,
+            "actions": list(self.actions),
+        }
 
     def _convert_keys(self, actions):
         out = {}
         for k in actions.keys():
             if actions[k] is None:
                 continue
-            if k == "x" or k == "y":
+            if k in ["x", "y"]:
                 out[k] = int(actions[k])
                 continue
             splits = k.split('_')

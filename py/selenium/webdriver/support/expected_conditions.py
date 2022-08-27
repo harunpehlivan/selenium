@@ -311,9 +311,7 @@ def element_to_be_clickable(mark):
         if not isinstance(target, WebElement):  # if given locator instead of WebElement
             target = driver.find_element(*target)  # grab element at locator
         target = visibility_of(target)(driver)
-        if target and target.is_enabled():
-            return target
-        return False
+        return target if target and target.is_enabled() else False
 
     return _predicate
 

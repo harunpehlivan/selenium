@@ -58,7 +58,7 @@ class Service(service.Service):
         super().__init__(executable_path, port, log)
 
     def command_line_args(self):
-        return ["-p", "%s" % self.port] + self.service_args
+        return ["-p", f"{self.port}"] + self.service_args
 
     @property
     def service_url(self):

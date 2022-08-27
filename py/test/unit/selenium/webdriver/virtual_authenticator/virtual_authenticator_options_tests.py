@@ -50,7 +50,7 @@ def test_get_protocol(options):
 
 def test_set_has_resident_key(options):
     options.has_resident_key = True
-    assert options.has_resident_key is True
+    assert options.has_resident_key
 
 
 def test_get_has_resident_key(options):
@@ -60,7 +60,7 @@ def test_get_has_resident_key(options):
 
 def test_set_has_user_verification(options):
     options.has_user_verification = True
-    assert options.has_user_verification is True
+    assert options.has_user_verification
 
 
 def test_get_has_user_verification(options):
@@ -70,7 +70,7 @@ def test_get_has_user_verification(options):
 
 def test_set_is_user_consenting(options):
     options.is_user_consenting = True
-    assert options.is_user_consenting is True
+    assert options.is_user_consenting
 
 
 def test_get_is_user_consenting(options):
@@ -80,7 +80,7 @@ def test_get_is_user_consenting(options):
 
 def test_set_is_user_verified(options):
     options.is_user_verified = True
-    assert options.is_user_verified is True
+    assert options.is_user_verified
 
 
 def test_get_is_user_verified(options):
