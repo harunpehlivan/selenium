@@ -197,7 +197,7 @@ class WebDriver(RemoteWebDriver):
                 if self.profile.tempfolder:
                     rmtree(self.profile.tempfolder)
             except Exception as e:
-                print(str(e))
+                print(e)
 
     @property
     def firefox_profile(self):

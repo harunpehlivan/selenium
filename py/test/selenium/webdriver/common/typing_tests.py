@@ -250,9 +250,9 @@ def test_arrow_keys_and_page_up_and_down(driver, pages):
     pages.load("javascriptPage.html")
     element = driver.find_element(by=By.ID, value="keyReporter")
     element.send_keys(
-        "a{}b{}{}{}{}{}1"
-        .format(Keys.LEFT, Keys.RIGHT, Keys.UP, Keys.DOWN, Keys.PAGE_UP, Keys.PAGE_DOWN)
+        f"a{Keys.LEFT}b{Keys.RIGHT}{Keys.UP}{Keys.DOWN}{Keys.PAGE_UP}{Keys.PAGE_DOWN}1"
     )
+
     assert element.get_attribute("value") == "ba1"
 
 
@@ -292,7 +292,7 @@ def test_delete_and_backspace_keys(driver, pages):
 def test_special_space_keys(driver, pages):
     pages.load("javascriptPage.html")
     element = driver.find_element(by=By.ID, value="keyReporter")
-    element.send_keys("abcd" + Keys.SPACE + "fgh" + Keys.SPACE + "ij")
+    element.send_keys(f"abcd{Keys.SPACE}fgh{Keys.SPACE}ij")
     assert element.get_attribute("value") == "abcd fgh ij"
 
 
@@ -305,18 +305,14 @@ def test_numberpad_and_function_keys(driver, pages):
     pages.load("javascriptPage.html")
     element = driver.find_element(by=By.ID, value="keyReporter")
     element.send_keys(
-        "abcd{}{}{}{}{}{}{}{}{}{}{}{}abcd"
-        .format(
-            Keys.MULTIPLY, Keys.SUBTRACT, Keys.ADD, Keys.DECIMAL, Keys.SEPARATOR,
-            Keys.NUMPAD0, Keys.NUMPAD9, Keys.ADD, Keys.SEMICOLON, Keys.EQUALS, Keys.DIVIDE,
-            Keys.NUMPAD3
-        )
+        f"abcd{Keys.MULTIPLY}{Keys.SUBTRACT}{Keys.ADD}{Keys.DECIMAL}{Keys.SEPARATOR}{Keys.NUMPAD0}{Keys.NUMPAD9}{Keys.ADD}{Keys.SEMICOLON}{Keys.EQUALS}{Keys.DIVIDE}{Keys.NUMPAD3}abcd"
     )
+
     assert element.get_attribute("value") == "abcd*-+.,09+;=/3abcd"
 
     element.clear()
-    element.send_keys("FUNCTION" + Keys.F2 + "-KEYS" + Keys.F2)
-    element.send_keys("" + Keys.F2 + "-TOO" + Keys.F2)
+    element.send_keys(f"FUNCTION{Keys.F2}-KEYS{Keys.F2}")
+    element.send_keys(f"{Keys.F2}-TOO{Keys.F2}")
     assert element.get_attribute("value") == "FUNCTION-KEYS-TOO"
 
 

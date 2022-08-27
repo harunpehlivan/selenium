@@ -52,7 +52,7 @@ class Service:
         """
         Gets the url of the Service
         """
-        return "http://%s" % utils.join_host_port('localhost', self.port)
+        return f"http://{utils.join_host_port('localhost', self.port)}"
 
     def command_line_args(self):
         raise NotImplementedError("This method needs to be implemented in a sub class")
@@ -79,14 +79,14 @@ class Service:
         except OSError as err:
             if err.errno == errno.ENOENT:
                 raise WebDriverException(
-                    "'{}' executable needs to be in PATH. {}".format(
-                        os.path.basename(self.path), self.start_error_message)
+                    f"'{os.path.basename(self.path)}' executable needs to be in PATH. {self.start_error_message}"
                 )
+
             elif err.errno == errno.EACCES:
                 raise WebDriverException(
-                    "'{}' executable may have wrong permissions. {}".format(
-                        os.path.basename(self.path), self.start_error_message)
+                    f"'{os.path.basename(self.path)}' executable may have wrong permissions. {self.start_error_message}"
                 )
+
             else:
                 raise
         except Exception as e:
@@ -102,14 +102,12 @@ class Service:
             count += 1
             sleep(0.5)
             if count == 60:
-                raise WebDriverException("Can not connect to the Service %s" % self.path)
+                raise WebDriverException(f"Can not connect to the Service {self.path}")
 
     def assert_process_still_running(self):
-        return_code = self.process.poll()
-        if return_code:
+        if return_code := self.process.poll():
             raise WebDriverException(
-                'Service %s unexpectedly exited. Status code was: %s'
-                % (self.path, return_code)
+                f'Service {self.path} unexpectedly exited. Status code was: {return_code}'
             )
 
     def is_connectable(self):
@@ -119,11 +117,11 @@ class Service:
         from urllib import request
         from urllib.error import URLError
         try:
-            request.urlopen("%s/shutdown" % self.service_url)
+            request.urlopen(f"{self.service_url}/shutdown")
         except URLError:
             return
 
-        for x in range(30):
+        for _ in range(30):
             if not self.is_connectable():
                 break
             else:

@@ -151,7 +151,7 @@ class ChromiumOptions(ArgOptions):
           value: boolean value indicating to set the headless option
         """
         args = {'--headless'}
-        if value is True:
+        if value:
             self._arguments.extend(args)
         else:
             self._arguments = list(set(self._arguments) - args)

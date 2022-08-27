@@ -95,15 +95,13 @@ class WebDriver(RemoteWebDriver):
         if not options:
             options = self.create_options()
 
-        if service:
-            self.iedriver = service
-        else:
-            self.iedriver = Service(
-                executable_path,
-                port=self.port,
-                host=self.host,
-                log_level=log_level,
-                log_file=service_log_path)
+        self.iedriver = service or Service(
+            executable_path,
+            port=self.port,
+            host=self.host,
+            log_level=log_level,
+            log_file=service_log_path,
+        )
 
         self.iedriver.start()
 

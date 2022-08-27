@@ -125,11 +125,8 @@ def is_url_connectable(port: Union[int, str]) -> bool:
     from urllib import request as url_request
 
     try:
-        res = url_request.urlopen("http://127.0.0.1:%s/status" % port)
-        if res.getcode() == 200:
-            return True
-        else:
-            return False
+        res = url_request.urlopen(f"http://127.0.0.1:{port}/status")
+        return res.getcode() == 200
     except Exception:
         return False
 
@@ -140,11 +137,9 @@ def keys_to_typing(value: Iterable[AnyKey]) -> List[str]:
     for val in value:
         if isinstance(val, Keys):
             typing.append(val)
-        elif isinstance(val, int) or isinstance(val, float):
+        elif isinstance(val, (int, float)):
             val = str(val)
-            for i in range(len(val)):
-                typing.append(val[i])
+            typing.extend(val[i] for i in range(len(val)))
         else:
-            for i in range(len(val)):
-                typing.append(val[i])
+            typing.extend(val[i] for i in range(len(val)))
     return typing

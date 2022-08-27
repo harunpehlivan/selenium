@@ -88,7 +88,7 @@ class BaseOptions(metaclass=ABCMeta):
 
         :param strategy: the strategy corresponding to a document readiness state
         """
-        if strategy in ["normal", "eager", "none"]:
+        if strategy in {"normal", "eager", "none"}:
             self.set_capability("pageLoadStrategy", strategy)
         else:
             raise ValueError("Strategy can only be one of the following: normal, eager, none")
@@ -108,7 +108,13 @@ class BaseOptions(metaclass=ABCMeta):
 
         :param behavior: behavior to use when an alert is encountered
         """
-        if behavior in ["dismiss", "accept", "dismiss and notify", "accept and notify", "ignore"]:
+        if behavior in {
+            "dismiss",
+            "accept",
+            "dismiss and notify",
+            "accept and notify",
+            "ignore",
+        }:
             self.set_capability("unhandledPromptBehavior", behavior)
         else:
             raise ValueError("Behavior can only be one of the following: dismiss, accept, dismiss and notify, "
@@ -129,7 +135,7 @@ class BaseOptions(metaclass=ABCMeta):
 
         :param timeouts: values in milliseconds for implicit wait, page load and script timeout
         """
-        if all(x in timeouts.keys() for x in ("implicit", "pageLoad", "script")):
+        if all(x in timeouts for x in ("implicit", "pageLoad", "script")):
             self.set_capability("timeouts", timeouts)
         else:
             raise ValueError("Timeout keys can only be one of the following: implicit, pageLoad, script")

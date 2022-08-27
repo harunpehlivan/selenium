@@ -169,10 +169,9 @@ class WebElement(BaseWebElement):
         """
         if getAttribute_js is None:
             _load_js()
-        attribute_value = self.parent.execute_script(
-            "return (%s).apply(null, arguments);" % getAttribute_js,
-            self, name)
-        return attribute_value
+        return self.parent.execute_script(
+            f"return ({getAttribute_js}).apply(null, arguments);", self, name
+        )
 
     def is_selected(self) -> bool:
         """Returns whether the element is selected.
@@ -215,9 +214,7 @@ class WebElement(BaseWebElement):
                                    self.parent.file_detector.is_local_file(str(keys_to_send)),
                                    ''.join(map(str, value)).split('\n')))
             if None not in local_files:
-                remote_files = []
-                for file in local_files:
-                    remote_files.append(self._upload(file))
+                remote_files = [self._upload(file) for file in local_files]
                 value = '\n'.join(remote_files)
 
         self._execute(Command.SEND_KEYS_TO_ELEMENT,
@@ -238,7 +235,10 @@ class WebElement(BaseWebElement):
         browser_main_version = int(self._parent.caps["browserVersion"].split(".")[0])
         assert self._parent.caps["browserName"].lower() not in ["firefox",
                                                                 "safari"], "This only currently works in Chromium based browsers"
-        assert not browser_main_version <= 95, f"Please use Chromium based browsers with version 96 or later. Version used {self._parent.caps['browserVersion']}"
+        assert (
+            browser_main_version > 95
+        ), f"Please use Chromium based browsers with version 96 or later. Version used {self._parent.caps['browserVersion']}"
+
         return self._execute(Command.GET_SHADOW_ROOT)['value']
 
     # RenderedWebElement Items
@@ -248,8 +248,8 @@ class WebElement(BaseWebElement):
         if isDisplayed_js is None:
             _load_js()
         return self.parent.execute_script(
-            "return (%s).apply(null, arguments);" % isDisplayed_js,
-            self)
+            f"return ({isDisplayed_js}).apply(null, arguments);", self
+        )
 
     @property
     def location_once_scrolled_into_view(self) -> dict:
@@ -271,9 +271,7 @@ class WebElement(BaseWebElement):
     def size(self) -> dict:
         """The size of the element."""
         size = self._execute(Command.GET_ELEMENT_RECT)['value']
-        new_size = {"height": size["height"],
-                    "width": size["width"]}
-        return new_size
+        return {"height": size["height"], "width": size["width"]}
 
     def value_of_css_property(self, property_name) -> str:
         """The value of a CSS property."""
@@ -284,9 +282,7 @@ class WebElement(BaseWebElement):
     def location(self) -> dict:
         """The location of the element in the renderable canvas."""
         old_loc = self._execute(Command.GET_ELEMENT_RECT)['value']
-        new_loc = {"x": round(old_loc['x']),
-                   "y": round(old_loc['y'])}
-        return new_loc
+        return {"x": round(old_loc['x']), "y": round(old_loc['y'])}
 
     @property
     def rect(self) -> dict:
@@ -411,7 +407,7 @@ class WebElement(BaseWebElement):
             value = '[id="%s"]' % value
         elif by == By.CLASS_NAME:
             by = By.CSS_SELECTOR
-            value = ".%s" % value
+            value = f".{value}"
         elif by == By.NAME:
             by = By.CSS_SELECTOR
             value = '[name="%s"]' % value
@@ -435,7 +431,7 @@ class WebElement(BaseWebElement):
             value = '[id="%s"]' % value
         elif by == By.CLASS_NAME:
             by = By.CSS_SELECTOR
-            value = ".%s" % value
+            value = f".{value}"
         elif by == By.NAME:
             by = By.CSS_SELECTOR
             value = '[name="%s"]' % value

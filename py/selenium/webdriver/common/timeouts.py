@@ -98,7 +98,7 @@ class Timeouts:
 
     def _convert(self, timeout: float) -> int:
         if isinstance(timeout, (int, float)):
-            return int(float(timeout) * 1000)
+            return int(timeout * 1000)
         else:
             raise TypeError("Timeouts can only be an int or a float")
 

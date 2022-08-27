@@ -37,7 +37,7 @@ class ChromiumService(service.Service):
 
         self.service_args = service_args or []
         if log_path:
-            self.service_args.append('--log-path=%s' % log_path)
+            self.service_args.append(f'--log-path={log_path}')
 
         if not start_error_message:
             raise AttributeError("start_error_message should not be empty")

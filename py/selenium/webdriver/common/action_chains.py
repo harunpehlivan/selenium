@@ -363,8 +363,10 @@ class ActionChains:
         """
 
         if not isinstance(scroll_origin, ScrollOrigin):
-            raise TypeError('Expected object of type ScrollOrigin, got: '
-                            '{}'.format(type(scroll_origin)))
+            raise TypeError(
+                f'Expected object of type ScrollOrigin, got: {type(scroll_origin)}'
+            )
+
 
         self.w3c_actions.wheel_action.scroll(origin=scroll_origin.origin,
                                              x=scroll_origin.x_offset,
